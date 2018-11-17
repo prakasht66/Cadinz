@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "201965083054",
+    "firebase_url": "https://cadinz-a5cf8.firebaseio.com",
+    "project_id": "cadinz-a5cf8",
+    "storage_bucket": "cadinz-a5cf8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201965083054:android:0d74ec68cc328238",
+        "android_client_info": {
+          "package_name": "app.hamcr7.mapr.cadinz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201965083054-d19hflagbas0knva1eobdcgos11bukif.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.hamcr7.mapr.cadinz",
+            "certificate_hash": "f08dd3a0a48934bc6f8a262df98a0dd9db588c26"
+          }
+        },
+        {
+          "client_id": "201965083054-5h3njnqbm8vlij1a72q01791tklqrufe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk_4R6lke1eMtpuXOg7Hc_B78fgaF6PJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201965083054-5h3njnqbm8vlij1a72q01791tklqrufe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
