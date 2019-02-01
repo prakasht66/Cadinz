@@ -1,4 +1,42 @@
 <resources>
     <string name="app_name">Cadinz</string>
     <string name="btn_facebook">Facebook Login</string>
+    <string name="facebook_app_id">500168697143965</string>
+    <string name="fb_login_protocol_scheme">fb500168697143965</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="IntroductionTopics">
+        <item>Introduction -Cad Customization</item>
+        <item>Introduction -NX Open</item>
+        <item>Visual Studio NX Wizard Setup</item>
+    </string-array>
+
+    <string-array name="NXTopics">
+        <item>Introduction To NX Open</item>
+        <item>Visual Studio NX Wizard Setup</item>
+        <item> Default Code</item>
+        <item> Create New File </item>
+        <item> Create Block </item>
+        <item> Create Cylinder </item>
+        <item> Create Block And Extrude </item>
+        <item> Create Sketch </item>
+        <item> Create Sketch And Extrude </item>
+        <item> Create Drawing And Base View </item>
+        <item> Create Dimension  </item>
+        <item> Selection Filter Example </item>
+        <item> NX Block Styler Example </item>
+    </string-array>
+
+    <string-array name="UsefulLinks">
+        <item>NXOpen Links</item>
+        <item>C# Basics</item>
+        <item>Interview Questions</item>
+    </string-array>
+
 </resources>

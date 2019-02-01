@@ -1,0 +1,181 @@
+using System;
+using NXOpen;
+using NXOpen.Drafting;
+using NXOpen.Drawings;
+using NXOpen.Utilities;
+using NXOpen.UF;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+    public static Part workPart;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            workPart = theSession.Parts.Work;
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();
+
+            //TODO: Add your application code here 
+            int moduleID;
+            int vis=0;int cli=0;
+            Tag[] visibleObjs;
+            Tag[] clipObjs;
+            //
+            //Check for Drafting module in NX
+            theUfSession.UF.AskApplicationModule(out moduleID);
+            if (moduleID == 1)
+            {
+                //Get the Active Sheet
+                DrawingSheet dSheet = workPart.DrawingSheets.CurrentDrawingSheet;
+                //Get the 1st view
+                DraftingView dView=dSheet.GetDraftingViews()[0];
+                //Get all the objects in view
+                theUfSession.View.AskVisibleObjects(dView.Tag, out vis, out visibleObjs, out cli, out clipObjs);
+
+                if (visibleObjs.Length > 0)
+                {
+                    //Call this function to create Diameter Dimension
+                    CreateDiameterDimension(visibleObjs, dView);
+                }
+
+            }
+            else
+            {
+
+                theUI.NXMessageBox.Show("Error",NXMessageBox.DialogType.Warning,"Please Open a Drawing file with View and Execute ");
+                return retValue;
+            }
+
+
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+    /// <summary>
+    /// This Function creates Diameter Dimension for all the Circular objects in active view
+    /// </summary>
+    /// <param name="visibleObjs"></param>
+    /// <param name="activeView"></param>
+    private static void CreateDiameterDimension(Tag[] visibleObjs,DraftingView activeView)
+    {
+        
+        int objType,objSubtype;
+
+
+        foreach(Tag obj in visibleObjs)
+        {
+            //Get type and Subtype
+            theUfSession.Obj.AskTypeAndSubtype(obj, out objType, out objSubtype);
+            //Check if Circular
+            if (objType == UFConstants.UF_circle_type)
+            {
+                //Type Caste into Drafting Curve
+                DraftingCurve dCurve=(DraftingCurve)NXObjectManager.Get(obj);
+                //Initiate RadialDimensionBuilder
+                NXOpen.Annotations.Dimension nullNXOpen_Annotations_Dimension = null;
+                NXOpen.Annotations.RadialDimensionBuilder radialDimensionBuilder;
+                radialDimensionBuilder = workPart.Dimensions.CreateRadialDimensionBuilder(nullNXOpen_Annotations_Dimension);
+                //Fill the required inputs
+                radialDimensionBuilder.Origin.Anchor = NXOpen.Annotations.OriginBuilder.AlignmentPosition.MidCenter;
+                radialDimensionBuilder.Origin.Plane.PlaneMethod = NXOpen.Annotations.PlaneBuilder.PlaneMethodType.XyPlane;
+                NXOpen.Point3d point1 = new NXOpen.Point3d(50.0, 50.0, 100.0);
+                //Set FirstAssociativity value.
+                radialDimensionBuilder.FirstAssociativity.SetValue(dCurve, activeView, point1);
+                //Initiate AssociativeOriginData
+                NXOpen.Annotations.Annotation.AssociativeOriginData assocOrigin = new NXOpen.Annotations.Annotation.AssociativeOriginData();
+
+                assocOrigin.OriginType = NXOpen.Annotations.AssociativeOriginType.Drag;
+                assocOrigin.VertAlignmentPosition = NXOpen.Annotations.AlignmentPosition.TopLeft;
+                assocOrigin.StackAlignmentPosition = NXOpen.Annotations.StackAlignmentPosition.Above;
+                radialDimensionBuilder.Origin.SetAssociativeOrigin(assocOrigin);
+
+                NXOpen.Point3d point2 = new NXOpen.Point3d(500.0, 500.0, 0.0);
+                radialDimensionBuilder.Origin.Origin.SetValue(null, activeView, point2);
+
+                radialDimensionBuilder.Origin.SetInferRelativeToGeometry(false);
+                radialDimensionBuilder.Style.LineArrowStyle.LeaderOrientation = NXOpen.Annotations.LeaderSide.Left;
+                radialDimensionBuilder.Style.DimensionStyle.TextCentered = false;                
+                //Commit and Destroy 
+                NXOpen.NXObject nXObject;
+                nXObject = radialDimensionBuilder.Commit();
+                radialDimensionBuilder.Destroy();
+
+
+            }
+        }
+       
+
+
+        //throw new NotImplementedException();
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+        return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        // return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

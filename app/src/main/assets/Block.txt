@@ -1,0 +1,117 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();           
+            
+            //TODO: Add your application code here 
+            //Get the Current part as work part
+             Part workPart = theSession.Parts.Work;
+            //Declare and initialize feature Class Object
+            NXOpen.Features.Feature nullNXOpen_Features_Feature = null;
+            //Declare  BlockFeatureBuilder Class Object
+            NXOpen.Features.BlockFeatureBuilder blockFeatureBuilder = null;           
+            //Step 1-initialize object for blockFeature 
+            blockFeatureBuilder = workPart.Features.CreateBlockFeatureBuilder(nullNXOpen_Features_Feature);
+            //Step 2-Set  BooleanOption 
+            blockFeatureBuilder.BooleanOption.Type = NXOpen.GeometricUtilities.BooleanOperation.BooleanType.Create;
+            //Step 3 -Create Point for Origin
+            NXOpen.Point3d coordinates1 = new NXOpen.Point3d(0.0, 0.0, 0.0);//This Is Value            
+            //Step 4-This is Object for Point.It should be Created from Point3d coordinates.
+            NXOpen.Point point1 = null;
+            point1 = workPart.Points.CreatePoint(coordinates1);
+            //Step 5-BlockFeatureBuilder Type 
+            blockFeatureBuilder.Type = NXOpen.Features.BlockFeatureBuilder.Types.OriginAndEdgeLengths;
+            //Step 6-Set OriginPoint for blockFeature 
+            blockFeatureBuilder.OriginPoint = point1;
+            //Step 7-SetOriginAndLengths for blockFeature 
+            blockFeatureBuilder.SetOriginAndLengths(coordinates1, "100", "100", "100");
+            //Step 8-Now all Inputs are set.So we Can Commit Feature to get the output 
+            NXOpen.Features.Feature feature1;//feature Object -Output
+            //Commits the feature parameters and creates the feature 
+            feature1 = blockFeatureBuilder.CommitFeature();
+            //Step 9-Finally Destroy the builder.
+            //Deletes the builder, and cleans up any objects created by the builder
+            blockFeatureBuilder.Destroy();         
+
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+         return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

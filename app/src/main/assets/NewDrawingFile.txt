@@ -1,0 +1,198 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+using NXOpen.Drafting;
+using NXOpen.Drawings;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    private static Part workPart;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+            workPart = theSession.Parts.Work;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();
+
+            //TODO: Add your application code here 
+            //Call CreateNewDrawingFile method to create new drawing file
+            bool isSuccess=  CreateNewDrawingFile();
+
+            if (isSuccess)
+            {
+                //Call CreateBaseView method to create a new Base View
+                CreateBaseView();
+            }
+          
+
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    private static void CreateBaseView()
+    {
+
+        theSession.ApplicationSwitchImmediate("UG_APP_DRAFTING");
+
+        workPart.Drafting.EnterDraftingApplication();
+        NXOpen.Part displayPart = theSession.Parts.Display;
+
+
+        displayPart.Views.WorkView.UpdateCustomSymbols();
+        displayPart.Drafting.SetTemplateInstantiationIsComplete(true);
+
+
+        //NXOpen.Part part1 = workPart;
+        //bool loadStatus1;
+        //loadStatus1 = part1.IsFullyLoaded;
+
+        // ----------------------------------------------
+        //   Menu: Insert->View->Base...
+        // ----------------------------------------------
+        //Create BaseViewBuilder and Initialize
+        NXOpen.Drawings.BaseView nullNXOpen_Drawings_BaseView = null;
+        NXOpen.Drawings.BaseViewBuilder baseViewBuilder1;
+        baseViewBuilder1 = workPart.DraftingViews.CreateBaseViewBuilder(nullNXOpen_Drawings_BaseView);
+
+        baseViewBuilder1.Placement.Associative = true;
+
+        //Create View For Top view From current NX workpart
+        ModelingViewCollection mviews = workPart.ModelingViews;
+        NXOpen.ModelingView topView = null;
+        foreach (ModelingView mv in mviews)
+        {
+            if (mv.Name.Equals("Top"))
+            {
+                topView = mv;
+                break;
+
+            }
+        }
+        //Assign Top View to SelectedView
+        baseViewBuilder1.SelectModelView.SelectedView = topView;
+        //Set ViewStyleBase part and Part Name
+        baseViewBuilder1.Style.ViewStyleBase.Part = workPart;
+        baseViewBuilder1.Style.ViewStyleBase.PartName = "C:\\Program Files\\Siemens\\NX 11.0\\UGII\\model11_dwg1.prt";
+        //Get DrawingSheet to get the center position and place the view 
+        DrawingSheet dSheet = workPart.DrawingSheets.CurrentDrawingSheet;        
+        //Set View Placement point
+        NXOpen.Point3d point1 = new NXOpen.Point3d(dSheet.Length / 2, dSheet.Height/2, 0.0);
+        baseViewBuilder1.Placement.Placement.SetValue(null, displayPart.Views.WorkView, point1);
+        //Finally Commit and Create a New View In Drawing
+        NXOpen.NXObject nXObject2;
+        nXObject2 = baseViewBuilder1.Commit();
+        //Destroy the builder 
+        baseViewBuilder1.Destroy();
+    }
+
+    private static bool CreateNewDrawingFile()
+    {
+        bool isCreated = false;
+
+        try
+        {
+            //Create a FileNew object and Initialize
+            NXOpen.FileNew fileNew1;
+            fileNew1 = theSession.Parts.FileNew();
+            //Set  TemplateFileName 
+            fileNew1.TemplateFileName = "Drawing-A0-Size-template.prt";
+            //Set  Units 
+            fileNew1.Units = NXOpen.Part.Units.Millimeters;
+            //Set  TemplateType 
+            fileNew1.TemplateType = NXOpen.FileNewTemplateType.Item;
+            //Set  TemplatePresentationName 
+            fileNew1.TemplatePresentationName = "A0 - Size";
+            //Set  FullPath (with your file name and  extension )
+            fileNew1.NewFileName = "C:\\Program Files\\Siemens\\NX 11.0\\UGII\\model11_dwg1.prt";
+            //Set your File name
+            fileNew1.MasterFileName = "model11";
+            fileNew1.MakeDisplayedPart = true;
+            //Finally Commit and Create a New File
+            NXOpen.NXObject nXObject1;
+            nXObject1 = fileNew1.Commit();
+            //Destroy the builder 
+            fileNew1.Destroy();
+            //Return bool
+            isCreated = true;
+        }
+        catch (Exception ex)
+        {
+            theUI.NXMessageBox.Show("Error Creating New Drawing", NXMessageBox.DialogType.Warning, ex.Message);
+            isCreated = false;
+        }
+
+        return isCreated;
+
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+        return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        // return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

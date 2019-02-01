@@ -1,0 +1,206 @@
+using System;
+using System.Linq;
+using NXOpen;
+using NXOpen.Features;
+using NXOpen.UF;
+using NXOpen.Utilities;
+using NXOpen.UIStyler;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+    private static Part workPart;
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();
+
+            //TODO: Add your application code here 
+            //Get the Current part as work part
+             workPart = theSession.Parts.Work;
+            //Declare and initialize feature Class Object
+            NXOpen.Features.Feature nullNXOpen_Features_Feature = null;
+            //Declare  BlockFeatureBuilder Class Object
+            NXOpen.Features.BlockFeatureBuilder blockFeatureBuilder = null;
+            //Step 1-initialize object for blockFeature 
+            blockFeatureBuilder = workPart.Features.CreateBlockFeatureBuilder(nullNXOpen_Features_Feature);
+            //Step 2-Set  BooleanOption 
+            blockFeatureBuilder.BooleanOption.Type = NXOpen.GeometricUtilities.BooleanOperation.BooleanType.Create;
+            //Step 3 -Create Point for Origin
+            NXOpen.Point3d coordinates1 = new NXOpen.Point3d(0.0, 0.0, 0.0);//This Is Value            
+            //Step 4-This is Object for Point.It should be Created from Point3d coordinates.
+            NXOpen.Point point1 = null;
+            point1 = workPart.Points.CreatePoint(coordinates1);
+            //Step 5-BlockFeatureBuilder Type 
+            blockFeatureBuilder.Type = NXOpen.Features.BlockFeatureBuilder.Types.OriginAndEdgeLengths;
+            //Step 6-Set OriginPoint for blockFeature 
+            blockFeatureBuilder.OriginPoint = point1;
+            //Step 7-SetOriginAndLengths for blockFeature 
+            blockFeatureBuilder.SetOriginAndLengths(coordinates1, "100", "100", "100");
+            //Step 8-Now all Inputs are set.So we Can Commit Feature to get the output 
+            NXOpen.Features.Feature feature1;//feature Object -Output
+            //Commits the feature parameters and creates the feature 
+            feature1 = blockFeatureBuilder.CommitFeature();
+            //Step 9-Finally Destroy the builder.
+            //Deletes the builder, and cleans up any objects created by the builder
+            blockFeatureBuilder.Destroy(); 
+
+            //Face Data Variable Declaration
+            int type=0;
+	        double[] point=new double[3];
+            double[] dir = new double[3];
+            double[] box = new double[6];
+	        double radius;
+	        double rad_data;
+	        int norm_dir;
+            //
+            //Caste to BodyFeature to get faces from BlockFeature
+            BodyFeature bFeat = (BodyFeature)feature1;
+            Body[] bodies=   bFeat.GetBodies();//Get all bodies -Returns only one body :)
+
+            foreach (Body body in bodies)
+            {
+                Face[] faces = body.GetFaces();//Get all bodies -Returns 6 faces :)
+
+                foreach (Face face in faces)
+                {
+                    //Ask Face data from all Face 
+                    theUfSession.Modl.AskFaceData(face.Tag, out type, point, dir, box, out radius, out rad_data, out norm_dir);
+
+                    if (dir[2] == 1.0)//Condition to check if the direction is +ve Z-axis
+                    {
+                        //Call below Function to Create a Cylindrical Hole on Top Face
+                        CreateHoleOnTopFace(face, body);
+                        break;
+                    }
+                      
+                }
+                break;  
+            }
+
+            //}
+
+         
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    private static void CreateHoleOnTopFace(Face face,Body targetBody)
+    {
+        try
+        {
+            //Create a New Cylinder using builder
+            NXOpen.Features.Feature nullNXOpen_Features_Feature = null;
+            NXOpen.Features.CylinderBuilder cylinderBuilder1;
+            cylinderBuilder1 = workPart.Features.CreateCylinderBuilder(nullNXOpen_Features_Feature);
+            //Diameter and Height Parameters as per Expression
+            cylinderBuilder1.Diameter.RightHandSide = "50";
+            cylinderBuilder1.Height.RightHandSide = "100";
+            //Set Boolean Type to Subtract
+            cylinderBuilder1.BooleanOption.Type = NXOpen.GeometricUtilities.BooleanOperation.BooleanType.Subtract;
+            NXOpen.Body[] targetBodies = new NXOpen.Body[1];           
+            targetBodies[0] = targetBody;//pass the body parameter here
+            cylinderBuilder1.BooleanOption.SetTargetBodies(targetBodies);
+            //Set Origin Points
+            NXOpen.Point3d point1 = new Point3d(50.0, 50, 100.0);
+            cylinderBuilder1.Origin = point1;
+            //Get cylinder Axis
+            NXOpen.Axis axis1;
+            axis1 = cylinderBuilder1.Axis;
+            //Get Axis Direction
+            NXOpen.Direction direction1;
+            direction1 = axis1.Direction;
+
+            //Reverse the Direction 
+            //Because we are subtracting the body from Top Face to Bottom
+            bool success1;
+            success1 = direction1.ReverseDirection();
+            axis1.Direction = direction1;
+            //Set the reversed Axis to cylinder
+            cylinderBuilder1.Axis = axis1;
+            //Commit now
+            NXOpen.NXObject nXObject1;
+            nXObject1 = cylinderBuilder1.Commit();
+            //Destroy 
+            cylinderBuilder1.Destroy();     
+        }
+        catch (Exception ex)
+        {
+            //errors Pops Up with NX MessageBox
+            theUI.NXMessageBox.Show("Error", NXMessageBox.DialogType.Warning, ex.Message);
+        }
+
+        
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+        return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

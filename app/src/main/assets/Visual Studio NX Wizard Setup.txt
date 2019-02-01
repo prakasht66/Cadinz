@@ -1,0 +1,35 @@
+Microsoft Visual Studio can be used to compile, link and debug programs on the Windows platform.  There are currently three NX Wizards that have been integrated into Visual Studio and available for use with the Common API.  They are:
+
+NX Open Wizard for use with C and C++ programs (found under the VC directory)
+
+NX Open VB Wizard for Visual Basic programs (found under the VB directory)
+
+NX Open C# Wizard for C# programs (found under the VC# directory)
+
+If Visual Studio has been installed on a workstation and then NX is installed locally (on the same workstation), the available NX Wizards will be installed automatically. Otherwise the following steps need to be taken to set up each of the NX Wizards on the local workstation.
+
+    Make sure the appropriate version Microsoft Visual Studio has been installed
+
+    Copy all files from the NX kit to the corresponding directories of the local Visual Studio installation.  The kit is located in:
+
+    %UGII_BASE_DIR%\ugopen\vs_files\
+
+To determine the correct location of the Visual Studio installation, look at the productdir registry key for each language. The key for C and C++ is HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\VisualStudio\version#\Setup\VC/productdir (where version# would be 7.1, 8.0, etc). For other languages replace the VC with either VB or VC#.
+
+    For each wizard, copy any files and/or folders under each subdirectory from the kit to the Visual Studio installation. This example is for the C language so substitute VB or VC# and the appropriate subdirectory for the other languages. Copy:
+
+    %UGII_BASE_DIR%\UGOPEN\vs_files\VC\VCWizards\
+
+    to
+
+    C:/program Files\Microsoft Visual Studio 8\VC\VCWizards\
+
+    and
+
+    %UGII_BASE_DIR%\UGOPEN\vs_files\VC\vcprojects\
+
+    to
+
+    C:/program Files\Microsoft Visual Studio 8\VC\vcprojects\
+
+Repeat for each language

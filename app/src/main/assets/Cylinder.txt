@@ -1,0 +1,111 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();           
+            
+            //TODO: Add your application code here 
+            //Get the Current part as work part
+             Part workPart = theSession.Parts.Work;
+            //Declare and initialize feature Class Object
+            NXOpen.Features.Feature nullNXOpen_Features_Feature = null;
+            //Declare  CylinderBuilder Class Object
+            NXOpen.Features.CylinderBuilder cylinderFeatureBuilder = null;
+            //Step 1-initialize object for cylinderFeature 
+            cylinderFeatureBuilder = workPart.Features.CreateCylinderBuilder(nullNXOpen_Features_Feature);
+            //Step 2-Set Boolean type to Create
+            cylinderFeatureBuilder.BooleanOption.Type = NXOpen.GeometricUtilities.BooleanOperation.BooleanType.Create;
+            //Step 3-Set CylinderBuilder type to AxisDiameterAndHeight
+            cylinderFeatureBuilder.Type = NXOpen.Features.CylinderBuilder.Types.AxisDiameterAndHeight;
+            //Step 3 -Assign diameter and Height 
+            cylinderFeatureBuilder.Diameter.RightHandSide = "50";
+            cylinderFeatureBuilder.Height.RightHandSide = "100";
+            //Step 4-Now all Inputs are set.So we Can Commit Feature to get the output 
+            NXOpen.Features.Feature feature1;//feature Object -Output
+            //Commits the feature parameters and creates the feature 
+            feature1 = cylinderFeatureBuilder.CommitFeature();
+            //Step 9-Finally Destroy the builder.
+            //Deletes the builder, and cleans up any objects created by the builder
+            cylinderFeatureBuilder.Destroy();         
+
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+         return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

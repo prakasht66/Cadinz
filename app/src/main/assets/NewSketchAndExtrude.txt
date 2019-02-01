@@ -1,0 +1,240 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+using NXOpen.Utilities;
+using NXOpen.Features;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+    private static Part workPart;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();
+            //TODO: Add your application code here 
+
+            //Create a New Model Part Before Running this Example
+
+            //Initiazlie Sketch Variable
+            Sketch sketch = null;
+            //Get the Current Work Part From NX Session
+            workPart = theSession.Parts.Work;
+            DatumCollection  dCollection=  workPart.Datums;//Get All Datums
+           //Declare the following Variables
+            DatumPlane xzPlane = null;
+            DatumAxis yAxis = null;
+            Vector3d sketchDir=new Vector3d ();
+            //
+            //Get the XZ plane and Y axis From Datum Collection
+            foreach (var item in dCollection)// Condition to Get the Y Axis from WorkCoordinateSystem(WCS)
+            {
+                if (item.GetType() == typeof(DatumPlane))
+                {
+                    DatumPlane dPlane = (DatumPlane)item;
+                    Vector3d vec3d = dPlane.Normal;
+                    if (vec3d.X == 1 && vec3d.Z == 0)//Condition to get XZ Plane
+                    {
+                        xzPlane = dPlane;
+                    }
+                    
+                }
+                else if (item.GetType() == typeof(DatumAxis))// Condition to Get the Y Axis from WorkCoordinateSystem(WCS)
+                {
+                    DatumAxis dAxis = (DatumAxis)item;
+                    Vector3d direction = dAxis.Direction;
+                    if (direction.Y == 1)//Condition to get Y Axis
+                    {
+                        yAxis = dAxis;
+                        sketchDir = direction;
+                    }
+
+                }
+            }
+
+            if (xzPlane != null && yAxis != null)
+            {
+                //use the Below Code To Create a new Sketch
+                NXOpen.Sketch nullNXOpen_Sketch = null;
+                NXOpen.SketchInPlaceBuilder sketchInPlaceBuilder;
+                sketchInPlaceBuilder = workPart.Sketches.CreateSketchInPlaceBuilder2(nullNXOpen_Sketch);
+                //Use Existing Plane
+                sketchInPlaceBuilder.PlaneOption = Sketch.PlaneOption.ExistingPlane;
+                //Create a virtual Plane based on Above Direction
+                NXOpen.Point3d origin1 = new NXOpen.Point3d(0.0, 0.0, 0.0);                
+                NXOpen.Plane plane;
+                plane = workPart.Planes.CreatePlane(origin1, sketchDir, NXOpen.SmartObject.UpdateOption.WithinModeling);
+                //Assign the new Plane to sketchInPlaceBuilder1 builder
+                sketchInPlaceBuilder.PlaneReference = plane;
+                //Commit Now
+                NXOpen.NXObject nXObject;
+                nXObject = sketchInPlaceBuilder.Commit();               
+                sketchInPlaceBuilder.Destroy();
+                //get the Output Sketch Object
+                sketch = (Sketch)nXObject;
+                sketch.Activate(Sketch.ViewReorient.False);//finally Activate the sketch
+                //Create a Rectangle Profile in active Sketch
+                CreateRectangeProfile(sketch);         
+            }
+            
+            
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    private static void CreateRectangeProfile(Sketch activeSketch)
+    {
+        //First Line
+        NXOpen.Point3d startPoint1 = new NXOpen.Point3d(-116.0, 54.0, 0.0);
+        NXOpen.Point3d endPoint1 = new NXOpen.Point3d(-46.0, 54.0, 0.0);
+        NXOpen.Line line1;
+        line1 = workPart.Curves.CreateLine(startPoint1, endPoint1);
+        //Second Line
+        NXOpen.Point3d startPoint2 = new NXOpen.Point3d(-46.0, 54.0, 0.0);
+        NXOpen.Point3d endPoint2 = new NXOpen.Point3d(-46.0, 6.0, 0.0);
+        NXOpen.Line line2;
+        line2 = workPart.Curves.CreateLine(startPoint2, endPoint2);
+        //Third Line
+        NXOpen.Point3d startPoint3 = new NXOpen.Point3d(-46.0, 6.0, 0.0);
+        NXOpen.Point3d endPoint3 = new NXOpen.Point3d(-116.0, 6.0, 0.0);
+        NXOpen.Line line3;
+        line3 = workPart.Curves.CreateLine(startPoint3, endPoint3);
+        //Fourth Line
+        NXOpen.Point3d startPoint4 = new NXOpen.Point3d(-116.0, 6.0, 0.0);
+        NXOpen.Point3d endPoint4 = new NXOpen.Point3d(-116.0, 54.0, 0.0);
+        NXOpen.Line line4;
+        line4 = workPart.Curves.CreateLine(startPoint4, endPoint4);
+        //Add All Lines as below
+        activeSketch.AddGeometry(line1, NXOpen.Sketch.InferConstraintsOption.InferCoincidentConstraints);
+
+        activeSketch.AddGeometry(line2, NXOpen.Sketch.InferConstraintsOption.InferCoincidentConstraints);
+
+        activeSketch.AddGeometry(line3, NXOpen.Sketch.InferConstraintsOption.InferCoincidentConstraints);
+
+        activeSketch.AddGeometry(line4, NXOpen.Sketch.InferConstraintsOption.InferCoincidentConstraints);
+        //Exit the Skecth Environment
+        activeSketch.Deactivate(Sketch.ViewReorient.False, Sketch.UpdateLevel.Model);
+        //Call below method for Extrude this sketch
+        CreateExtrude(activeSketch);
+        
+        
+    }
+
+    private static void CreateExtrude(Sketch sketchProfile)
+    {
+
+        //Create a new ExtrudeBuilder
+        Feature feat = null;
+        ExtrudeBuilder extrudeBuilder1;       
+
+        extrudeBuilder1 = workPart.Features.CreateExtrudeBuilder(feat);        
+        extrudeBuilder1.BooleanOperation.Type = NXOpen.GeometricUtilities.BooleanOperation.BooleanType.Create;
+        //Create a Section and add to builder
+        NXOpen.Section section1;
+        section1 = workPart.Sections.CreateSection();
+        section1.SetAllowedEntityTypes(NXOpen.Section.AllowTypes.OnlyCurves);
+        section1.AllowSelfIntersection(true);
+
+        extrudeBuilder1.Section = section1;
+        //Set Start and End Limits
+        extrudeBuilder1.Limits.StartExtend.Value.RightHandSide = "0";
+
+        extrudeBuilder1.Limits.EndExtend.Value.RightHandSide = "25";
+
+        extrudeBuilder1.Offset.StartOffset.RightHandSide = "0";
+
+        extrudeBuilder1.Offset.EndOffset.RightHandSide = "5";
+        //Get Skecth Feature for CurveFeatureRule
+        NXOpen.Features.Feature[] features1 = new NXOpen.Features.Feature[1];
+        NXOpen.Features.SketchFeature sketchFeature1 = (SketchFeature)sketchProfile.Feature;
+        features1[0] = sketchFeature1;
+        NXOpen.CurveFeatureRule curveFeatureRule1;
+        curveFeatureRule1 = workPart.ScRuleFactory.CreateRuleCurveFeature(features1);
+        //Add SelectionIntentRule to section
+        NXOpen.SelectionIntentRule[] rules1 = new NXOpen.SelectionIntentRule[1];
+        rules1[0] = curveFeatureRule1;
+        NXOpen.NXObject nullNXOpen_NXObject = null;
+        NXOpen.Point3d helpPoint1 = new NXOpen.Point3d(0.0, 0.0, 0.0);
+        section1.AddToSection(rules1, nullNXOpen_NXObject, nullNXOpen_NXObject, nullNXOpen_NXObject, helpPoint1, NXOpen.Section.Mode.Create, false);
+        //Create a Direction based on sketchProfile and assign
+        NXOpen.Direction direction1;
+        direction1 = workPart.Directions.CreateDirection(sketchProfile, NXOpen.Sense.Forward, NXOpen.SmartObject.UpdateOption.WithinModeling);
+        extrudeBuilder1.Direction = direction1;
+        //Finally Commit
+        NXOpen.Features.Feature feature1;
+        feature1 = extrudeBuilder1.CommitFeature();
+        //Destroy
+        extrudeBuilder1.Destroy();
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+        return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        // return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

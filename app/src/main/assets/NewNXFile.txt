@@ -1,0 +1,115 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();           
+            
+            //TODO: Add your application code here 
+            NXOpen.FileNew fileNew1;//Create object for FileNew Class
+
+            fileNew1 = theSession.Parts.FileNew();//Creates a new NX File .
+
+            fileNew1.TemplateFileName = "model-plain-1-mm-template.prt";
+
+            fileNew1.UseBlankTemplate = false;
+
+            fileNew1.ApplicationName = "ModelTemplate";
+
+            fileNew1.Units = NXOpen.Part.Units.Millimeters;          
+
+            fileNew1.TemplateType = NXOpen.FileNewTemplateType.Item;
+
+            fileNew1.TemplatePresentationName = "Model";           
+
+            fileNew1.NewFileName = "C:\\Program Files\\Siemens\\NX 11.0\\UGII\\model1.prt";//File Name with Full Path
+
+            fileNew1.MakeDisplayedPart = true;
+
+            NXOpen.NXObject nXObject1;//Declare new NXObject variable 
+            nXObject1 = fileNew1.Commit();//Commit with above inputs and Get a new NXObject
+
+            NXOpen.Part workPart = theSession.Parts.Work; //This returns the new NX part created above   
+
+            fileNew1.Destroy(); //Finally Destroy the builder  
+
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+         return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+

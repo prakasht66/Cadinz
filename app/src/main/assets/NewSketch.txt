@@ -1,0 +1,152 @@
+using System;
+using NXOpen;
+using NXOpen.UF;
+using NXOpen.Utilities;
+using NXOpen.Features;
+
+public class Program
+{
+    // class members
+    private static Session theSession;
+    private static UI theUI;
+    private static UFSession theUfSession;
+    public static Program theProgram;
+    public static bool isDisposeCalled;
+
+    //------------------------------------------------------------------------------
+    // Constructor
+    //------------------------------------------------------------------------------
+    public Program()
+    {
+        try
+        {
+            theSession = Session.GetSession();
+            theUI = UI.GetUI();
+            theUfSession = UFSession.GetUFSession();
+            isDisposeCalled = false;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+            // UI.GetUI().NXMessageBox.Show("Message", NXMessageBox.DialogType.Error, ex.Message);
+        }
+    }
+
+    //------------------------------------------------------------------------------
+    //  Explicit Activation
+    //      This entry point is used to activate the application explicitly
+    //------------------------------------------------------------------------------
+    public static int Main(string[] args)
+    {
+        int retValue = 0;
+        try
+        {
+            theProgram = new Program();
+            //TODO: Add your application code here 
+
+            //Create a New Model Part Before Running this Example
+
+            //Initiazlie Sketch Variable
+            Sketch sketch = null;
+            //Get the Current Work Part From NX Session
+            Part workPart = theSession.Parts.Work;
+            DatumCollection  dCollection=  workPart.Datums;//Get All Datums
+           //Declare the following Variables
+            DatumPlane xzPlane = null;
+            DatumAxis yAxis = null;
+            Vector3d sketchDir=new Vector3d ();
+            //
+            //Get the XZ plane and Y axis From Datum Collection
+            foreach (var item in dCollection)// Condition to Get the Y Axis from WorkCoordinateSystem(WCS)
+            {
+                if (item.GetType() == typeof(DatumPlane))
+                {
+                    DatumPlane dPlane = (DatumPlane)item;
+                    Vector3d vec3d = dPlane.Normal;
+                    if (vec3d.X == 1 && vec3d.Z == 0)//Condition to get XZ Plane
+                    {
+                        xzPlane = dPlane;
+                    }
+                    
+                }
+                else if (item.GetType() == typeof(DatumAxis))// Condition to Get the Y Axis from WorkCoordinateSystem(WCS)
+                {
+                    DatumAxis dAxis = (DatumAxis)item;
+                    Vector3d direction = dAxis.Direction;
+                    if (direction.Y == 1)//Condition to get Y Axis
+                    {
+                        yAxis = dAxis;
+                        sketchDir = direction;
+                    }
+
+                }
+            }
+
+            if (xzPlane != null && yAxis != null)
+            {
+                //use the Below Code To Create a new Sketch
+                NXOpen.Sketch nullNXOpen_Sketch = null;
+                NXOpen.SketchInPlaceBuilder sketchInPlaceBuilder;
+                sketchInPlaceBuilder = workPart.Sketches.CreateSketchInPlaceBuilder2(nullNXOpen_Sketch);
+                //Use Existing Plane
+                sketchInPlaceBuilder.PlaneOption = Sketch.PlaneOption.ExistingPlane;
+                //Create a virtual Plane based on Above Direction
+                NXOpen.Point3d origin1 = new NXOpen.Point3d(0.0, 0.0, 0.0);                
+                NXOpen.Plane plane;
+                plane = workPart.Planes.CreatePlane(origin1, sketchDir, NXOpen.SmartObject.UpdateOption.WithinModeling);
+                //Assign the new Plane to sketchInPlaceBuilder1 builder
+                sketchInPlaceBuilder.PlaneReference = plane;
+                //Commit Now
+                NXOpen.NXObject nXObject;
+                nXObject = sketchInPlaceBuilder.Commit();               
+                sketchInPlaceBuilder.Destroy();
+                //get the Output Sketch Object
+                sketch = (Sketch)nXObject;
+                sketch.Activate(Sketch.ViewReorient.False);
+            }
+            
+            
+            theProgram.Dispose();
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+        return retValue;
+    }
+
+    //------------------------------------------------------------------------------
+    // Following method disposes all the class members
+    //------------------------------------------------------------------------------
+    public void Dispose()
+    {
+        try
+        {
+            if (isDisposeCalled == false)
+            {
+                //TODO: Add your application code here 
+            }
+            isDisposeCalled = true;
+        }
+        catch (NXOpen.NXException ex)
+        {
+            // ---- Enter your exception handling code here -----
+
+        }
+    }
+
+    public static int GetUnloadOption(string arg)
+    {
+        //Unloads the image explicitly, via an unload dialog
+        //return System.Convert.ToInt32(Session.LibraryUnloadOption.Explicitly);
+
+        //Unloads the image immediately after execution within NX
+        return System.Convert.ToInt32(Session.LibraryUnloadOption.Immediately);
+
+        //Unloads the image when the NX session terminates
+        // return System.Convert.ToInt32(Session.LibraryUnloadOption.AtTermination);
+    }
+
+}
+
