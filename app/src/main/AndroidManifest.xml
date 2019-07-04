@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="app.hamcr7.mapr.cadinz">
+
+    package="app.hamcr7.mapr.cadonz">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -13,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PdfView"></activity>
+        <activity android:name=".ShowInfo"></activity>
+        <activity android:name=".PdfView" />
         <activity android:name=".ShowCode" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -43,7 +45,6 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
     </application>
 
 </manifest>

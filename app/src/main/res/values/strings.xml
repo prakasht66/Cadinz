@@ -10,16 +10,19 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior
+    </string>
     <string-array name="IntroductionTopics">
         <item>Introduction -Cad Customization</item>
         <item>Introduction -NX Open</item>
         <item>Visual Studio NX Wizard Setup</item>
     </string-array>
 
-    <string-array name="NXTopics">
-        <item>Introduction To NX Open</item>
-        <item>Visual Studio NX Wizard Setup</item>
+    <string-array name="Topics">
+        <item> NX Open</item>
+        <item> Prerequisites</item>
+        <item> Introduction To NX Open</item>
+        <item> Visual Studio NX Wizard Setup</item>
         <item> Default Code</item>
         <item> Create New File </item>
         <item> Create Block </item>
@@ -29,8 +32,6 @@
         <item> Create Sketch And Extrude </item>
         <item> Create Drawing And Base View </item>
         <item> Create Dimension  </item>
-        <item> Selection Filter Example </item>
-        <item> NX Block Styler Example </item>
     </string-array>
 
     <string-array name="UsefulLinks">
@@ -38,6 +39,63 @@
         <item>C# Basics</item>
         <item>Interview Questions</item>
     </string-array>
+    <string name="AboutUs">
+
+A simple app to learn CAD Customization."\n"In this app, one can learn the basics of NX Open Customization and how to create features and other geometrics using NX Open API’s."\n""\n"For Better understanding we have provided some sample codes."\n""\n"
+So, before you start, make sure you know the basics of C# and Oops concepts."\n""\n"
+Enjoy the App!
+
+</string>
+    <string name="NXOpenTitle">
+        NX Open :
+       </string>
+    <string name="NXOpenIntro">
+    NX Open is an Application Programming Interface (API) that lets you write programs to customize or extend NX."\n"
+        The benefit is that applications created this way can often speed up repetitive tasks, and capture important design process knowledge."\n""\n"
+
+    There is a broad range of NX Open functions, which provide capabilities like"\n""\n"
+
+    1.Creating part geometry, assemblies, drawings, and CAE and CAM objects"\n""\n"
+    2.Cycling through the objects in a part file, reading information or performing various operations on them"\n""\n"
+    3.Creating custom user interfaces that allow users to select objects and enter data"\n""\n"
+    Some typical applications of these functions are:"\n""\n"
+    1.Creating part geometry or drawings according to your local standards"\n""\n"
+    2.Importing data from other sources, outside of NX"\n""\n"
+    3.Reading data from objects in a part file, and writing it out in some form of report"\n""\n"
+    4.Building custom applications to make processes faster or easier to understand"\n"
+    </string>
+
+    <string name="PreReqTitle">
+        Prerequisites :
+    </string>
+    <string name="Prerequisites">
+        Programming Knowledge :"\n""\n"
+
+        This Application uses only C# for examples. "\n""\n"
+        But any basic knowledge on below languages are good enough to start NX open Customization ,"\n" "\n"
+
+        C#,"\n"
+        VB.Net"\n"
+        JAVA,"\n"
+        Python "\n" "\n"
+
+        To kick start NX open customization ,we need the following software\'s. "\n" "\n"
+        NX Version : 11.0 or 12.0"\n" "\n"
+
+        IDE: Visual Studio 2015 or above(Express/Profession Edition)"\n" "\n"
+
+        .NET Framework : 4.6 (Recommended)"\n" "\n"
+
+         OS: Windows 7 or 10"\n" "\n"
+
+        Hardware Requirements:"\n" "\n"
+
+        Graphics card : 2 GB( Nvidia)"\n" "\n"
+
+        RAM: 8GB ,16GB(Recommended), 64-bit (x64) processor"\n" "\n"
+
+        Screen Resolution: 1280 x 1024 or higher, widescreen format"\n" "\n"
+    </string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

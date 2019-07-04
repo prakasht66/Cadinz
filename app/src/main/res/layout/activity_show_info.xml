@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_register"
+    android:layout_margin="5dp"
+    tools:context=".ShowInfo">
+        <LinearLayout
+            android:id="@+id/container"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/title_showInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:background="@color/bg_register"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"
+                    />
+                <!-- TODO: Update blank fragment layout -->
+                <TextView
+                    android:id="@+id/show_InfoText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/bg_register"
+                    android:textColor="@color/white"
+                    android:padding="10dp"           />
+        </LinearLayout>
+
+
+
+</ScrollView>
+
+

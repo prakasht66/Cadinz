@@ -3,6 +3,15 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home"/>
+        <!--<item-->
+            <!--android:id="@+id/nav_theme"-->
+            <!--android:icon="@drawable/ic_theme_24"-->
+            <!--android:title="ChangeTheme"-->
+             <!--/>-->
+        <item
             android:id="@+id/nav_about"
             android:icon="@drawable/ic_people_outline_black_24dp"
             android:title="About CadOnz"/>

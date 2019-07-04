@@ -9,7 +9,36 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity"
     tools:openDrawer="start">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/list_back_pic"
+        android:id="@+id/test_layout"
+        android:orientation="vertical">
 
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/bg_register"
+                android:elevation="4dp"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        </FrameLayout>
+    </LinearLayout>
     <com.rom4ek.arcnavigationview.ArcNavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -22,39 +51,5 @@
         app:itemBackground="@android:color/white"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/main_layout"
-        android:background="@drawable/list_back_pic"
-        >
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                android:background="@color/bg_register"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
-        </android.support.design.widget.AppBarLayout>
-
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:paddingTop="5dp"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="3.0sp"
-            android:cacheColorHint="#00000000"
-            />
-    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>
