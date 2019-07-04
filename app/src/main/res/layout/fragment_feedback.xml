@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Feedback">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_thirty"
+            android:layout_marginRight="@dimen/margin_thirty"
+            android:layout_marginTop="@dimen/margin_thirty"
+            android:gravity="top|start"
+            android:hint="@string/your_input"
+            android:backgroundTint="@color/bg_register"
+            android:inputType="textMultiLine"
+            android:lines="8"
+            android:maxLines="10"
+            android:scrollbars="vertical"
+            android:minLines="5" />
+
+        <Button
+            android:id="@+id/submitSuggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bg_register"
+            android:layout_margin="@dimen/margin_thirty"
+            android:textColor="@android:color/white"
+            android:text="@string/send_feedback" />
+
+    </LinearLayout>
+</ScrollView >
