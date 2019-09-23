@@ -6,15 +6,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.fragment.app.Fragment;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
+
 import android.view.MenuItem;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -27,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
     public SharedPreferences.Editor editor;
     NavigationView navigationView;
     SharedPreferences mSharedPreferences=null;
-
     Toolbar toolbar;
+
 
 
 
@@ -45,6 +50,32 @@ public class MainActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        TabLayout tabLayout =  findViewById(R.id.tab_layout);
+        tabLayout.addTab(tabLayout.newTab().setText("Code"));
+        tabLayout.addTab(tabLayout.newTab().setText("Videos"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = findViewById(R.id.view_pager);
+        TabsAdapter tabsAdapter = new TabsAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(tabsAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+
         navigationView = findViewById(R.id.nav_view);
         final DrawerLayout drawerLayout =  findViewById(R.id.drawer_layout);
 
@@ -73,11 +104,6 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
                         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
                         break;
-//                    case R.id.nav_theme:
-//                        fragment = new AboutUs();
-//                        TAG_FRAGMENT="About";
-//                        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment,TAG_FRAGMENT).addToBackStack(TAG_FRAGMENT).commit();
-//                        break;
                     case R.id.nav_about:
                         fragment = new AboutUs();
                         TAG_FRAGMENT="About";
@@ -101,14 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
-
-
-
-
-
-
     }
-
 
 
     private void RateApplication()

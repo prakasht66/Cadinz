@@ -7,33 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".ShowCode">
 
-    <android.support.design.widget.CoordinatorLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/coOrLayout">
 
-        <android.support.design.widget.AppBarLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <android.support.v7.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/code_toolBar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
                 android:background="@color/bg_register"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-        </android.support.design.widget.AppBarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
         <com.pddstudio.highlightjs.HighlightJsView
             android:id="@+id/highlight_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
             />
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_Download"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +41,7 @@
             android:src="@drawable/ic_file_download_black_24dp"
             fabSize="normal"
             />
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_Share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,7 +49,7 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_share_black_24dp"
            />
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_Play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -58,5 +57,5 @@
             android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_image_black_24dp"
             />
-    </android.support.design.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

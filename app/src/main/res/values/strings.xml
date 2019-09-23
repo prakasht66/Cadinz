@@ -12,33 +12,6 @@
     <string name="action_settings">Settings</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior
     </string>
-    <string-array name="IntroductionTopics">
-        <item>Introduction -Cad Customization</item>
-        <item>Introduction -NX Open</item>
-        <item>Visual Studio NX Wizard Setup</item>
-    </string-array>
-
-    <string-array name="Topics">
-        <item> NX Open</item>
-        <item> Prerequisites</item>
-        <item> Introduction To NX Open</item>
-        <item> Visual Studio NX Wizard Setup</item>
-        <item> Default Code</item>
-        <item> Create New File </item>
-        <item> Create Block </item>
-        <item> Create Cylinder </item>
-        <item> Create Block And Extrude </item>
-        <item> Create Sketch </item>
-        <item> Create Sketch And Extrude </item>
-        <item> Create Drawing And Base View </item>
-        <item> Create Dimension  </item>
-    </string-array>
-
-    <string-array name="UsefulLinks">
-        <item>NXOpen Links</item>
-        <item>C# Basics</item>
-        <item>Interview Questions</item>
-    </string-array>
     <string name="AboutUs">
 
 A simple app to learn CAD Customization."\n"In this app, one can learn the basics of NX Open Customization and how to create features and other geometrics using NX Open API’s."\n""\n"For Better understanding we have provided some sample codes."\n""\n"
@@ -46,9 +19,11 @@ So, before you start, make sure you know the basics of C# and Oops concepts."\n"
 Enjoy the App!
 
 </string>
+
     <string name="NXOpenTitle">
         NX Open :
        </string>
+
     <string name="NXOpenIntro">
     NX Open is an Application Programming Interface (API) that lets you write programs to customize or extend NX."\n"
         The benefit is that applications created this way can often speed up repetitive tasks, and capture important design process knowledge."\n""\n"
@@ -64,7 +39,6 @@ Enjoy the App!
     3.Reading data from objects in a part file, and writing it out in some form of report"\n""\n"
     4.Building custom applications to make processes faster or easier to understand"\n"
     </string>
-
     <string name="PreReqTitle">
         Prerequisites :
     </string>
@@ -96,8 +70,34 @@ Enjoy the App!
 
         Screen Resolution: 1280 x 1024 or higher, widescreen format"\n" "\n"
     </string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="IntroductionTopics">
+        <item>Introduction -Cad Customization</item>
+        <item>Introduction -NX Open</item>
+        <item>Visual Studio NX Wizard Setup</item>
+    </string-array>
+    <string-array name="Topics">
+        <item> NX Open</item>
+        <item> Prerequisites</item>
+        <item> Introduction To NX Open</item>
+        <item> Visual Studio NX Wizard Setup</item>
+        <item> Default Code</item>
+        <item> Create New File </item>
+        <item> Create Block </item>
+        <item> Create Cylinder </item>
+        <item> Create Block And Extrude </item>
+        <item> Create Sketch </item>
+        <item> Create Sketch And Extrude </item>
+        <item> Create Drawing And Base View </item>
+        <item> Create Dimension  </item>
+    </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="UsefulLinks">
+        <item>NXOpen Links</item>
+        <item>C# Basics</item>
+        <item>Interview Questions</item>
+    </string-array>
 
 </resources>

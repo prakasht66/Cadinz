@@ -11,12 +11,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -63,7 +63,7 @@ public class ShowCode extends AppCompatActivity {
         shareBtn = findViewById(R.id.fab_Share);
         downloadBtn = findViewById(R.id.fab_Download);
         playBtn=findViewById(R.id.fab_Play);
-        playBtn.setVisibility(View.INVISIBLE);
+        playBtn.hide();
 
         shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +98,7 @@ public class ShowCode extends AppCompatActivity {
         showBtn=bundle.getString("button");
         if (showBtn.equals("Yes"))
         {
-            playBtn.setVisibility(View.VISIBLE);
+            playBtn.show();
             playBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
